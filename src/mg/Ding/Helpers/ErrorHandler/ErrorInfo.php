@@ -67,6 +67,18 @@ class ErrorInfo
      * @return integer
      */
     private $_line;
+	
+	/**
+     * Line that triggered the error.
+     * @return integer
+     */
+    private $_time;
+	
+	/**
+     * Line that triggered the error.
+     * @return integer
+     */
+    private $_code;
 
     /**
      * Returns PHP Error type.
@@ -106,6 +118,26 @@ class ErrorInfo
     public function getLine()
     {
         return $this->_line;
+    }
+	
+	/**
+     * Returns time that triggered the error.
+     *
+     * @return integer
+     */
+    public function getTime()
+    {
+        return $this->_time;
+    }
+	
+	/**
+     * Returns code that triggered the error.
+     *
+     * @return integer
+     */
+    public function getCode()
+    {
+        return $this->_code;
     }
 
     /**
@@ -157,6 +189,8 @@ class ErrorInfo
             . ', Message: ' . $this->getMessage()
             . ', File: ' . $this->getFile()
             . ', Line: ' . $this->getLine()
+			. ', Time: ' . $this->getTime()
+			. ', Code: ' . $this->getCode()
             . ']'
         ;
     }
@@ -170,11 +204,13 @@ class ErrorInfo
      *
      * @return void
      */
-    public function __construct($type, $message, $file, $line)
+    public function __construct($type, $message, $file, $line, $code, $time)
     {
         $this->_type = $type;
         $this->_message = $message;
         $this->_file = $file;
         $this->_line = $line;
+		$this->_time = $time;
+		$this->_code = $code;
     }
 }

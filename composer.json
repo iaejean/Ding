@@ -1,5 +1,5 @@
 {
-  "name": "marcelog/ding",
+  "name": "iaejean/ding",
   "type": "framework",
   "description": "PHP Dependency Injection based on Spring(tm), with Aspect Oriented Programming, MVC",
   "keywords": ["dependency", "injection", "di", "aop", "aspect", "event", "mvc", "tcp", "container", "bean", "jsr", "spring", "xml", "yaml", "annotation"],
@@ -10,6 +10,12 @@
       "name": "Marcelo Gornstein",
       "email": "marcelog@gmail.com",
       "homepage": "http://marcelog.github.com",
+      "role": "Developer"
+    },
+	{
+      "name": "Israel Hernández",
+      "email": "iaejeanx@gmail.com",
+      "homepage": "http://iaejean.github.com",
       "role": "Developer"
     }
   ],

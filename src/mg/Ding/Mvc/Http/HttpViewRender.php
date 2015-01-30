@@ -27,7 +27,7 @@
  */
 namespace Ding\Mvc\Http;
 
-use Ding\HttpSession\HttpSession;
+use Ding\HttpSession\IHttpSession;
 
 use Ding\MessageSource\IMessageSource;
 
@@ -52,6 +52,12 @@ class HttpViewRender implements IViewRender, IMessageSourceAware
      * @var IMessageSource
      */
     protected $messageSource;
+	protected $_session;
+	
+	public function setSession(IHttpSession $session)
+	{
+		$this->_session = $session;
+	}
 
     public function setMessageSource(IMessageSource $messageSource)
     {
@@ -60,14 +66,13 @@ class HttpViewRender implements IViewRender, IMessageSourceAware
 
     public function translate($bundle, $message, $arguments = array())
     {
-        $session = HttpSession::getSession();
-        if (!$session->hasAttribute('LANGUAGE')) {
+        if (!$this->_session->hasAttribute('LANGUAGE')) {
             return $this->messageSource->getMessage(
                 $bundle, $message, $arguments
             );
         } else {
             return $this->messageSource->getMessage(
-                $bundle, $message, $arguments, $session->getAttribute('LANGUAGE')
+                $bundle, $message, $arguments, $this->_session->getAttribute('LANGUAGE')
             );
         }
     }

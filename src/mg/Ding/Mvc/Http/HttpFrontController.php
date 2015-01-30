@@ -29,7 +29,6 @@
 namespace Ding\Mvc\Http;
 
 use Ding\Mvc\IViewRender;
-use Ding\HttpSession\HttpSession;
 use Ding\Mvc\IMapper;
 use Ding\Mvc\Exception\MvcException;
 use Ding\Mvc\ModelAndView;
@@ -115,8 +114,7 @@ class HttpFrontController
     public static function handle(array $properties = array(), $baseUrl = '/')
     {
         $exceptionThrown = null;
-        $filtersPassed = true;
-        $session = HttpSession::getSession();
+        $filtersPassed = true;        
         $container = ContainerImpl::getInstance($properties);
         self::$_logger = \Logger::getLogger(__CLASS__);
         $baseUrlLen = strlen($baseUrl);

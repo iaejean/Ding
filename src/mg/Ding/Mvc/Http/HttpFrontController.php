@@ -128,6 +128,7 @@ class HttpFrontController
             $dispatcher = $container->getBean('HttpDispatcher');
             $viewResolver = $container->getBean('HttpViewResolver');
             $exceptionMapper = $container->getBean('HttpExceptionMapper');
+			//$session = $container->getBean('SessionHandler');
             $render = $container->getBean('HttpViewRender');
             $method = strtolower($_SERVER['REQUEST_METHOD']);
             $url = $_SERVER['REQUEST_URI'];
@@ -145,6 +146,10 @@ class HttpFrontController
             if (!empty($_POST)) {
                 $variables = array_merge($variables, $_POST);
             }
+			if (!empty($_FILES)) {
+                $variables = array_merge($variables, $_FILES);
+            }            
+			
             $action = new HttpAction($url, $variables);
             $action->setMethod($method);
             $mapper = $container->getBean('HttpUrlMapper');

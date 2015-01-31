@@ -57,7 +57,7 @@ class Parser
         'ManyToMany', 'OneToMany', 'ManyToOne', 'OneToOne', 'Index',
         'JoinColumn', 'InheritanceType', 'DiscriminatorMap',
         'DiscriminatorColumn', 'Id', 'GeneratedValue', 'HasLifeCycleCallbacks',
-        'Target' , 'SuppressWarnings'
+        'Target' , 'SuppressWarnings', 'hotmail', 'gmail', 'yahoo'
     );
     private function _parseOptions($options)
     {

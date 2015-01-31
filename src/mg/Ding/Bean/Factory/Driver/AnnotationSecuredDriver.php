@@ -37,7 +37,6 @@ use Ding\Container\IContainer;
 use Ding\Reflection\IReflectionFactory;
 use Ding\Security\Firewall;
 
-
 /**
  *
  * PHP Version 5
@@ -49,8 +48,8 @@ use Ding\Security\Firewall;
  * @license    http://marcelog.github.com/ Apache License 2.0
  * @link       http://marcelog.github.com/
  */
-class MvcAnnotationDriver
-    implements IAfterConfigListener, IContainerAware, IReflectionFactoryAware
+class AnnotationSecuredDriver
+    implements  IAfterConfigListener, IContainerAware, IReflectionFactoryAware
 {
     /**
      * Container.
@@ -79,6 +78,7 @@ class MvcAnnotationDriver
     {
         $this->_container = $container;
     }
+	
     /**
      * Will call HttpUrlMapper::addAnnotatedController to add new mappings
      * from the @Controller annotated classes. Also, creates a new bean
@@ -89,45 +89,46 @@ class MvcAnnotationDriver
      */
     public function afterConfig()
     {
-        foreach ($this->reflectionFactory->getClassesByAnnotation('controller') as $controller) {
-			
-            foreach ($this->_container->getBeansByClass($controller) as $name) {
-                $annotations = $this->reflectionFactory->getClassAnnotations($controller);
-				
-                if (!$annotations->contains('requestmapping')) {
-                    continue;
-                }
+		$uri = explode("/",$_SERVER["REQUEST_URI"]);	
+		$auxMethod = strtolower($_SERVER['REQUEST_METHOD']);
+		$auxAction = array_pop($uri);		
+		$auxController = array_pop($uri);
+		
+		
+		foreach ($this->reflectionFactory->getClassesByAnnotation('controller') as $controller) {
+			foreach ($this->_container->getBeansByClass($controller) as $name) {
+				$annotations = $this->reflectionFactory->getClassAnnotations($controller);
                 $requestMappings = $annotations->getAnnotations('requestmapping');
-                foreach ($requestMappings as $map) {
+				foreach ($requestMappings as $map) {					
                     if ($map->hasOption('url')) {
-                        foreach ($map->getOptionValues('url') as $url) {
-                            HttpUrlMapper::addAnnotatedController($url, $name);
+					    foreach ($map->getOptionValues('url') as $url) {
+							if($url == "/".$auxController){
+								foreach ($this->reflectionFactory->getClass($controller)->getMethods() as $method) {
+									$methodName = $method->getName();
+									
+									if($methodName == $auxAction."Action"){										
+										$annotations = $this->reflectionFactory->getMethodAnnotations($controller, $methodName);
+										$annotation = $annotations->getSingleAnnotation('secured');
+										$access = "deniedAll()";
+										$method = "get";
+										
+										if ($annotation->hasOption('access')) {
+											$access = $annotation->getOptionSingleValue('access');
+										}
+
+										if ($annotation->hasOption('method')) {
+											$method = $annotation->getOptionSingleValue('method');
+										}
+										$firewall = $this->_container->getBean("Firewall");
+										$firewall->setContainer($this->_container);
+										$firewall->validateAnnotatedSecure($uri, $access, ($method == $auxMethod));
+									}									
+								}									
+							}                            
                         }
                     }
-                }
-				
-				$methodAux = $_SERVER['REQUEST_METHOD'];
-				$uri = $_SERVER['REQUEST_URI'];
-				$action = explode("/", $uri);
-				$action = array_pop($action)."Action";
-				
-				foreach ($this->reflectionFactory->getClass($controller)->getMethods() as $method) {
-					$methodName = $method->getName();
-					if($action == $methodName) {
-						$annotations = $this->reflectionFactory->getMethodAnnotations($controller, $methodName);
-						if ($annotations->contains('secured')) {						
-							
-							$annotation = $annotations->getSingleAnnotation("secured");			
-							$access = $annotation->getOptionSingleValue("access");
-							$method = $annotation->getOptionSingleValue("method");													
-							
-							$firewall = Firewall::getInstance();
-							$firewall->setContainer($this->_container);
-							$firewall->validateAnnotatedSecure($access, ($method == $methodAux));							
-						}
-					}
-				}
-            }
-        }
-    }
+                }			
+			}		
+        }   
+    }	
 }

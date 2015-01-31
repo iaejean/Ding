@@ -46,7 +46,7 @@ class HttpSession implements IHttpSession
      * Current instance.
      * @var HttpSession
      */
-    private static $_instance = false;
+    private $_instance = false;
 
     /**
      * Destroys the current session.
@@ -96,27 +96,12 @@ class HttpSession implements IHttpSession
     {
         $_SESSION[$name] = $value;
     }
-
-    /**
-     * Returns an instance of a session facade.
-     *
-     * @return HttpSession
-     */
-    public static function getSession()
-    {
-        if (self::$_instance === false) {
-            self::$_instance = new HttpSession();
-        }
-        return self::$_instance;
-    }
-
-    /**
-     * Constructor.
-     *
-     * @return void
-     */
-    private function __construct()
-    {
-        session_start();
-    }
+	
+	public function init()
+	{
+		if(!$this->_instance) {
+			session_start();
+			$this->_instance = true;
+		}			
+	}
 }

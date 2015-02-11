@@ -109,7 +109,9 @@ class MvcAnnotationDriver
 				$methodAux = $_SERVER['REQUEST_METHOD'];
 				$uri = $_SERVER['REQUEST_URI'];
 				$action = explode("/", $uri);
-				$action = array_pop($action)."Action";
+				$action = array_pop($action);
+				$action = explode("?", $action);
+				$action = $action[0]."Action";
 				
 				foreach ($this->reflectionFactory->getClass($controller)->getMethods() as $method) {
 					$methodName = $method->getName();

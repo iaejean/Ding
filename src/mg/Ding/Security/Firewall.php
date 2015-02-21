@@ -135,9 +135,6 @@ class Firewall implements IContainerAware
     public function isAllowed(array $listRols)
     {
 		$session = $this->_container->getBean('SessionHandler');
-		$providerRol = new ProviderRol();
-		$providerRol->setProviderUser($this->_container->getBean('ProviderUser'));		
-		
 		if(!$session->hasAttribute("sessionAuthenticated")){
 			header('HTTP/1.1 404 Session Expired');            			
 			exit(json_encode(array(
@@ -149,10 +146,14 @@ class Firewall implements IContainerAware
 				"message" => "Session Expirada",
 			)));	
 		}
-			
-        $session = $session->getAttribute("sessionAuthenticated");		
-		$rols = $providerRol->getRolsUser($session["username"]);
-        
+		$providerUser = $this->_container->getBean('ProviderUser');
+		$providerUser->setContainer($this->_container);		
+		
+		$providerRol = new ProviderRol();
+		$providerRol->setProviderUser($providerUser);		
+		
+		$session = $session->getAttribute("sessionAuthenticated");		        
+		$rols = $providerRol->getRolsUser($session);        
 		$intersect = array_intersect($rols, $listRols);
 		if(empty($intersect))
 			return false; 		

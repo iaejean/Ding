@@ -27,6 +27,10 @@
  */
 namespace Ding\Security;
 
+use Ding\Container\IContainerAware;
+use Ding\Container\IContainer;
+
+
 /**
  *
  * PHP Version 5
@@ -38,11 +42,11 @@ namespace Ding\Security;
  * @license    https://gitlab.com/iaejean Apache License 2.0
  * @link       https://gitlab.com/iaejean
  */
-interface IProviderUser
+interface IProviderUser extends IContainerAware
 {
-
+	public function setContainer(IContainer $container);
+	
 	public function getRolsUser($user);
 	
 	public function findUser($user, $password, $status = false);
-
 }

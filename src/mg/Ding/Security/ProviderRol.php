@@ -61,9 +61,8 @@ class ProviderRol
 		$this->providerUser = $providerUser;
 	}
 	
-	public function getRolsUser($user)
+	public function getRolsUser($session)
 	{
-		return $this->providerUser->getRolsUser($user);
-	}
-	
+		return $this->providerUser->getRolsUser($session);
+	}	
 }

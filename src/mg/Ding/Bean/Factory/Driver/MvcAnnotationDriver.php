@@ -106,39 +106,41 @@ class MvcAnnotationDriver
                     }
                 }				
 
-				$methodAux = $_SERVER['REQUEST_METHOD'];
-				$uri = $_SERVER['REQUEST_URI'];
-				$uri = explode("/", $uri);
-				$action = array_pop($uri);
-				$action = explode("?", $action);
-				$action = $action[0];
-				$resource = array_pop($uri);				
-				
-				foreach ($requestMappings as $map) {
-                    if ($map->hasOption('url')) {
-						foreach ($map->getOptionValues('url') as $url) {							
-							if($url == "/".$resource){									
-								foreach ($this->reflectionFactory->getClass($controller)->getMethods() as $method) {								
-									$methodName = $method->getName();					
-									
-									if($action."Action" == $methodName) {
-										$annotations = $this->reflectionFactory->getMethodAnnotations($controller, $methodName);
-										if ($annotations->contains('secured')) {						
-											
-											$annotation = $annotations->getSingleAnnotation("secured");			
-											$access = $annotation->getOptionSingleValue("access");
-											$method = $annotation->getOptionSingleValue("method");		
-											
-											$firewall = Firewall::getInstance();
-											$firewall->setContainer($this->_container);
-											$firewall->validateAnnotatedSecure($access, ($method == $methodAux));							
+				if(isset($_SERVER['REQUEST_METHOD'])){
+					$methodAux = $_SERVER['REQUEST_METHOD'];
+					$uri = $_SERVER['REQUEST_URI'];
+					$uri = explode("/", $uri);
+					$action = array_pop($uri);
+					$action = explode("?", $action);
+					$action = $action[0];
+					$resource = array_pop($uri);				
+					
+					foreach ($requestMappings as $map) {
+						if ($map->hasOption('url')) {
+							foreach ($map->getOptionValues('url') as $url) {							
+								if($url == "/".$resource){									
+									foreach ($this->reflectionFactory->getClass($controller)->getMethods() as $method) {								
+										$methodName = $method->getName();					
+										
+										if($action."Action" == $methodName) {
+											$annotations = $this->reflectionFactory->getMethodAnnotations($controller, $methodName);
+											if ($annotations->contains('secured')) {						
+												
+												$annotation = $annotations->getSingleAnnotation("secured");			
+												$access = $annotation->getOptionSingleValue("access");
+												$method = $annotation->getOptionSingleValue("method");		
+												
+												$firewall = Firewall::getInstance();
+												$firewall->setContainer($this->_container);
+												$firewall->validateAnnotatedSecure($access, ($method == $methodAux));							
+											}
 										}
 									}
-								}
-							}						
-                        }
-                    }
-                }
+								}						
+							}
+						}
+					}
+				}
             }
         }
     }

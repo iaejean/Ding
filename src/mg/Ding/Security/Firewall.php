@@ -87,7 +87,7 @@ class Firewall implements IContainerAware
     public function validateAnnotatedSecure($access, $method)
     {		
         if(!$method){
-			header('HTTP/1.1 400 Bad Request');            
+			header('HTTP/1.1 400 Bad Request', true, 400);            
 			exit(json_encode(array(
 				"type" => "Ding\Security\FireWall",
 				"code" => "400",
@@ -120,10 +120,10 @@ class Firewall implements IContainerAware
             $granted = $granted && $this->isAllowed($rols);
 			
         if(!$granted){
-			header('HTTP/1.1 403 Access Denied');            			
+			header('HTTP/1.1 401 Access Denied', true, 401);
 			exit(json_encode(array(
 				"type" => "Ding\Security\FireWall",
-				"code" => "403",
+				"code" => "401",
 				"file" => __FILE__,
 				"line" => __LINE__,
 				"time" => date("Y-m-d H:i:s"),
@@ -136,10 +136,10 @@ class Firewall implements IContainerAware
     {
 		$session = $this->_container->getBean('SessionHandler');
 		if(!$session->hasAttribute("sessionAuthenticated")){
-			header('HTTP/1.1 404 Session Expired');            			
+			header('HTTP/1.1 401 Session Expired', true, 401);
 			exit(json_encode(array(
 				"type" => "Ding\Security\FireWall",
-				"code" => "403",
+				"code" => "401",
 				"file" => __FILE__,
 				"line" => __LINE__,
 				"time" => date("Y-m-d H:i:s"),

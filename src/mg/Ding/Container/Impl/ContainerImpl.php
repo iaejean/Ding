@@ -1023,7 +1023,7 @@ class ContainerImpl implements IContainer
      *
      * @return true
      */
-    public function exceptionHandler(\Exception $exception)
+    public function exceptionHandler($exception)
     {
         $msg = $exception->getMessage()." in ".$exception->getFile().":".$exception->getLine();
         if ($msg == $this->_lastErrorMessage) {

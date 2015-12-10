@@ -164,7 +164,7 @@ class HttpUrlMapper implements IMapper, IContainerAware, ILoggerAware
             }
             $start = $controllerUrlStart + strlen($controllerUrl);
             $action = substr($url, $start);
-            if ($action === false) {
+            if ($action == false) {
                 $action = 'Main';
             }
             $action = explode('/', $action);

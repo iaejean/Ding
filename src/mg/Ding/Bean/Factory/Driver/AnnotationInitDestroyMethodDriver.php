@@ -86,12 +86,12 @@ class AnnotationInitDestroyMethodDriver implements IAfterDefinitionListener, IRe
         foreach ($this->reflectionFactory->getClass($class)->getMethods() as $method) {
             $methodName = $method->getName();
             $annotations = $this->reflectionFactory->getMethodAnnotations($class, $methodName);
-            if (empty($bean->getInitMethod()) & $annotations->contains('postconstruct')) {
-                $bean->setInitMethod($methodName);                
-            }
-            if (empty($bean->getDestroyMethod()) & $annotations->contains('predestroy')) {
-                $bean->setDestroyMethod($methodName);                
-            }
+            $initMethod = $bean->getInitMethod();
+            $destroytMethod = $bean->getDestroyMethod();			
+            if (empty($initMethod) & $annotations->contains('postconstruct')) 
+                $bean->setInitMethod($methodName);            
+            if (empty($destroyMethod) & $annotations->contains('predestroy'))
+                $bean->setDestroyMethod($methodName);
         }
         return $bean;
     }
